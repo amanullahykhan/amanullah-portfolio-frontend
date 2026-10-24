@@ -1,42 +1,15 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { getProjects } from "@/lib/wordpress";
 import ProjectCard from "@/components/ProjectCard";
 
-export default async function Home() {
+// 1. Move the data-fetching and dynamic parts into a separate async component
+async function DynamicHomeContent() {
   const projects = await getProjects();
   const featured = projects.slice(0, 3);
 
   return (
-    <main className="px-6">
-      {/* Hero */}
-      <section className="max-w-5xl mx-auto pt-20 pb-16">
-        <p className="font-mono-ui text-xs tracking-wide text-sub mb-4">
-          § 00 — DEVELOPER SPECIFICATION
-        </p>
-        <h1 className="text-4xl sm:text-5xl font-medium tracking-tight text-ink max-w-2xl leading-tight">
-          Full-stack WordPress developer, building since 2017
-        </h1>
-        <p className="mt-5 text-base text-sub max-w-xl leading-relaxed">
-          Custom plugins, automation workflows, and API integrations —
-          headless CMS architecture, self-hosted AI tooling, and production
-          systems that run without babysitting.
-        </p>
-        <div className="mt-8 flex gap-4 font-mono-ui text-xs">
-          <Link
-            href="/projects"
-            className="border border-ink text-ink px-5 py-2.5 tracking-wide hover:bg-ink hover:text-white transition-colors"
-          >
-            [ VIEW WORK → ]
-          </Link>
-          <Link
-            href="/contact"
-            className="border border-line text-sub px-5 py-2.5 tracking-wide hover:border-ink hover:text-ink transition-colors"
-          >
-            [ GET IN TOUCH ]
-          </Link>
-        </div>
-      </section>
-
+    <>
       {/* Stat block */}
       <section className="max-w-5xl mx-auto py-10 border-y border-line">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 font-mono-ui">
@@ -80,6 +53,47 @@ export default async function Home() {
           </div>
         </section>
       )}
+    </>
+  );
+}
+
+// 2. Main page component remains clean and wraps the dynamic block in Suspense
+export default function Home() {
+  return (
+    <main className="px-6">
+      {/* Hero (Static) */}
+      <section className="max-w-5xl mx-auto pt-20 pb-16">
+        <p className="font-mono-ui text-xs tracking-wide text-sub mb-4">
+          § 00 — DEVELOPER SPECIFICATION
+        </p>
+        <h1 className="text-4xl sm:text-5xl font-medium tracking-tight text-ink max-w-2xl leading-tight">
+          Full-stack WordPress developer, building since 2017
+        </h1>
+        <p className="mt-5 text-base text-sub max-w-xl leading-relaxed">
+          Custom plugins, automation workflows, and API integrations —
+          headless CMS architecture, self-hosted AI tooling, and production
+          systems that run without babysitting.
+        </p>
+        <div className="mt-8 flex gap-4 font-mono-ui text-xs">
+          <Link
+            href="/projects"
+            className="border border-ink text-ink px-5 py-2.5 tracking-wide hover:bg-ink hover:text-white transition-colors"
+          >
+            [ VIEW WORK → ]
+          </Link>
+          <Link
+            href="/contact"
+            className="border border-line text-sub px-5 py-2.5 tracking-wide hover:border-ink hover:text-ink transition-colors"
+          >
+            [ GET IN TOUCH ]
+          </Link>
+        </div>
+      </section>
+
+      {/* Suspense boundary handles the asynchronous WordPress data fetch */}
+      <Suspense fallback={<div className="max-w-5xl mx-auto py-16 font-mono-ui text-xs text-sub">Loading projects...</div>}>
+        <DynamicHomeContent />
+      </Suspense>
     </main>
   );
 }
