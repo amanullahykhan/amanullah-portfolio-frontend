@@ -1,5 +1,6 @@
 import { getProjects } from "@/lib/wordpress";
 import ProjectCard from "@/components/ProjectCard";
+export const instant = false;
 
 export const metadata = {
   title: "Projects",

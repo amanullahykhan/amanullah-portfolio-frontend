@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getProjects } from "@/lib/wordpress";
 import ProjectCard from "@/components/ProjectCard";
+export const instant = false;
 
 export default async function Home() {
   const projects = await getProjects();

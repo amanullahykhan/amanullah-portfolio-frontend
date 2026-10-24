@@ -1,5 +1,6 @@
 import { getProjects } from "@/lib/wordpress";
 import { notFound } from "next/navigation";
+export const instant = false;
 
 async function getProjectBySlug(slug) {
   const projects = await getProjects();
