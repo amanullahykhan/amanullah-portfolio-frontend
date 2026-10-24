@@ -3,26 +3,28 @@ import Link from "next/link";
 
 export default function Navbar() {
   const links = [
-    { href: "/", label: "Home" },
-    { href: "/projects", label: "Projects" },
-    { href: "/services", label: "Services" },
-    { href: "/ai-lab", label: "AI Lab" },
-    { href: "/about", label: "About" },
-    { href: "/contact", label: "Contact" },
-    
+    { href: "/", label: "HOME" },
+    { href: "/projects", label: "WORK" },
+    { href: "/services", label: "SERVICES" },
+    { href: "/ai-lab", label: "AI LAB" },
+    { href: "/about", label: "ABOUT" },
+    { href: "/contact", label: "CONTACT" },
   ];
 
   return (
-    <header className="w-full border-b border-zinc-200">
+    <header className="w-full sticky top-0 z-50 backdrop-blur-sm font-mono-ui border-b border-line bg-white/90">
       <nav className="max-w-5xl mx-auto flex items-center justify-between px-6 py-4">
-        <Link href="/" className="font-semibold tracking-tight">
-          Amanullah Khan
+        <Link href="/" className="text-sm font-medium tracking-tight text-ink">
+          AMANULLAH KHAN
         </Link>
-        <ul className="flex gap-6 text-sm text-zinc-300">
-          {links.map((link) => (
+        <ul className="flex gap-5 text-xs text-sub">
+          {links.map((link, i) => (
             <li key={link.href}>
-              <Link href={link.href} className="hover:text-white transition-colors">
-                {link.label}
+              <Link
+                href={link.href}
+                className="tracking-wide transition-colors hover:text-ink"
+              >
+                [ {String(i).padStart(2, "0")} ] {link.label}
               </Link>
             </li>
           ))}
