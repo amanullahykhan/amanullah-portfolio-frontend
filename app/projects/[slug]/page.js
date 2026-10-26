@@ -1,11 +1,11 @@
 import { getProjects } from "@/lib/wordpress";
 import { notFound } from "next/navigation";
-export const instant = false;
 
 async function getProjectBySlug(slug) {
   const projects = await getProjects();
   return projects.find((p) => p.slug === slug);
 }
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const project = await getProjectBySlug(slug);
@@ -23,6 +23,7 @@ export async function generateMetadata({ params }) {
       : `Case study: ${project.title.rendered}`,
   };
 }
+
 export default async function ProjectPage({ params }) {
   const { slug } = await params;
   const project = await getProjectBySlug(slug);
@@ -32,71 +33,64 @@ export default async function ProjectPage({ params }) {
   }
 
   const acf = project.acf || {};
+  const tags = (acf.tags || "")
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+
+  const sections = [
+    { label: "PROBLEM", value: acf.problem },
+    { label: "ROLE", value: acf.role },
+    { label: "CONSTRAINTS", value: acf.constraints },
+    { label: "ARCHITECTURE", value: acf.architecture_notes },
+    { label: "RESULT", value: acf.result },
+    { label: "LESSONS", value: acf.lessons },
+  ].filter((s) => s.value);
 
   return (
-    <main className="max-w-3xl mx-auto px-6 py-16">
-      <h1 className="text-3xl font-semibold tracking-tight">
+    <main className="max-w-3xl mx-auto px-6 py-24">
+      <p className="meta uppercase mb-4">§ 02.01 — CASE STUDY</p>
+      <h1 className="text-4xl font-medium tracking-tight text-ink">
         {project.title.rendered}
       </h1>
 
-      {acf.tags && (
-        <p className="mt-2 text-sm text-zinc-500">{acf.tags}</p>
+      {tags.length > 0 && (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {tags.map((tag) => (
+            <span
+              key={tag}
+              className="meta uppercase border border-line px-2 py-1"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
       )}
 
-      <div
-        className="mt-6 text-zinc-300"
-        dangerouslySetInnerHTML={{ __html: project.content.rendered }}
-      />
-
-      {acf.problem && (
-        <section className="mt-10">
-          <h2 className="text-xl font-semibold">Problem</h2>
-          <p className="mt-2 text-zinc-400">{acf.problem}</p>
-        </section>
+      {project.content?.rendered && (
+        <div
+          className="prose mt-10"
+          dangerouslySetInnerHTML={{ __html: project.content.rendered }}
+        />
       )}
 
-      {acf.role && (
-        <section className="mt-6">
-          <h2 className="text-xl font-semibold">Role</h2>
-          <p className="mt-2 text-zinc-400">{acf.role}</p>
-        </section>
-      )}
-      {acf.constraints && (
-        <section className="mt-6">
-            <h2 className="text-xl font-semibold">Constraints</h2>
-            <p className="mt-2 text-zinc-400">{acf.constraints}</p>
-        </section>
-        )}
-
-        {acf.architecture_notes && (
-        <section className="mt-6">
-            <h2 className="text-xl font-semibold">Architecture</h2>
-            <p className="mt-2 text-zinc-400">{acf.architecture_notes}</p>
-        </section>
-        )}
-
-        {acf.result && (
-        <section className="mt-6">
-            <h2 className="text-xl font-semibold">Result</h2>
-            <p className="mt-2 text-zinc-400">{acf.result}</p>
-        </section>
-        )}
-
-        {acf.lessons && (
-        <section className="mt-6">
-            <h2 className="text-xl font-semibold">Lessons</h2>
-            <p className="mt-2 text-zinc-400">{acf.lessons}</p>
-        </section>
-        )}
+      <div className="mt-12 divide-y divide-line border-t border-line">
+        {sections.map((section) => (
+          <section key={section.label} className="py-8">
+            <p className="meta uppercase mb-3">{section.label}</p>
+            <p className="text-sub leading-relaxed">{section.value}</p>
+          </section>
+        ))}
+      </div>
 
       {acf.repo_url && (
         <a
           href={acf.repo_url}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-8 inline-block text-zinc-300 underline"
+          className="mt-10 inline-block meta uppercase text-ink border-b border-ink hover:opacity-70 transition-opacity"
         >
-          View repo →
+          VIEW REPO →
         </a>
       )}
     </main>
