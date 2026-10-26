@@ -1,5 +1,7 @@
 import { getProjects } from "@/lib/wordpress";
 import ProjectCard from "@/components/ProjectCard";
+import Reveal from "@/components/Reveal";
+
 export const instant = false;
 
 export const metadata = {
@@ -12,13 +14,20 @@ export default async function ProjectsPage() {
 
   return (
     <main className="max-w-5xl mx-auto px-6 py-24">
-      <p className="meta uppercase mb-4">§ 02 — PROJECTS</p>
-      <h1 className="text-4xl font-medium tracking-tight text-ink">Selected work</h1>
-      <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {projects.map((project, i) => (
-          <ProjectCard key={project.id} project={project} index={i} />
-        ))}
-      </div>
+      <Reveal>
+        <div>
+          <p className="meta uppercase mb-4 text-accent">§ 02 — PROJECTS</p>
+          <h1 className="text-4xl font-medium tracking-tight text-ink">Selected work</h1>
+        </div>
+      </Reveal>
+
+      <Reveal delay={0.1}>
+        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {projects.map((project, i) => (
+            <ProjectCard key={project.id} project={project} index={i} />
+          ))}
+        </div>
+      </Reveal>
     </main>
   );
 }
