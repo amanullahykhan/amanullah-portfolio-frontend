@@ -1,20 +1,11 @@
 import { getProjects } from "@/lib/wordpress";
 import { notFound } from "next/navigation";
 
-// Optional: Generate static paths at build time for better performance
-export async function generateStaticParams() {
-  const projects = await getProjects();
-  if (!Array.isArray(projects)) return [];
-  
-  return projects.map((project) => ({
-    slug: project.slug,
-  }));
-}
+export const instant = false;
 
 async function getProjectBySlug(slug) {
   const projects = await getProjects();
-  
-  // Safeguard against undefined/null responses from WordPress during build
+
   if (!Array.isArray(projects)) {
     return null;
   }
