@@ -1,9 +1,25 @@
 import { getProjects } from "@/lib/wordpress";
 import { notFound } from "next/navigation";
 
+// Optional: Generate static paths at build time for better performance
+export async function generateStaticParams() {
+  const projects = await getProjects();
+  if (!Array.isArray(projects)) return [];
+  
+  return projects.map((project) => ({
+    slug: project.slug,
+  }));
+}
+
 async function getProjectBySlug(slug) {
   const projects = await getProjects();
-  return projects.find((p) => p.slug === slug);
+  
+  // Safeguard against undefined/null responses from WordPress during build
+  if (!Array.isArray(projects)) {
+    return null;
+  }
+
+  return projects.find((p) => p.slug === slug) || null;
 }
 
 export async function generateMetadata({ params }) {
@@ -17,10 +33,10 @@ export async function generateMetadata({ params }) {
   const acf = project.acf || {};
 
   return {
-    title: project.title.rendered,
+    title: project.title?.rendered || "Case Study",
     description: acf.problem
       ? acf.problem.slice(0, 160)
-      : `Case study: ${project.title.rendered}`,
+      : `Case study: ${project.title?.rendered || slug}`,
   };
 }
 
@@ -51,7 +67,7 @@ export default async function ProjectPage({ params }) {
     <main className="max-w-3xl mx-auto px-6 py-24">
       <p className="meta uppercase mb-4">§ 02.01 — CASE STUDY</p>
       <h1 className="text-4xl font-medium tracking-tight text-ink">
-        {project.title.rendered}
+        {project.title?.rendered}
       </h1>
 
       {tags.length > 0 && (
